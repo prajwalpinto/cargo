@@ -1,8 +1,9 @@
 from operator import add
 import googlemaps
+import os
 from flask import request, Response
 from flask_restful import Resource
-gmaps = googlemaps.Client(key='AIzaSyCGrkEE1r_DvdYhdbrvZkKj32C8EDaG9WY')
+gmaps = googlemaps.Client(key=os.environ['API_KEY'])
 
 class Pricer(Resource):
     def get(self):
