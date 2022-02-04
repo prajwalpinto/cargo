@@ -6,17 +6,29 @@ from flask_restful import Resource
 gmaps = googlemaps.Client(key=os.environ['API_KEY'])
 
 class Pricer(Resource):
-    def get(self):
+    def post(self):
         content_type = request.headers.get('Content-Type')
+        print('******', content_type)
+        print('^^^^^^^')
+        print(request.headers)
         if (content_type == 'application/json'):
             payload = request.get_json()
+            print('--------')
+            print(payload)
+            print('--------')
             result = calculate_price(payload)
             if result: 
-                return result
+                response = Response(result, status=200)
+                # response.headers.add("Access-Control-Allow-Origin", "*")
+                return response
             else:
-                return Response("invalid request params", status=400)
+                response = Response("invalid request params", status=400)
+                # response.headers.add("Access-Control-Allow-Origin", "*")
+                return response
         else:
-           return Response("The response body goes here", status=400)
+            response = Response("The response body goes here", status=400)
+            # response.headers.add("Access-Control-Allow-Origin", "*")
+            return response
 
 
 
