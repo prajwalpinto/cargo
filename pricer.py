@@ -60,8 +60,8 @@ def additional_pricing(payload):
     if(items == 'Three'): price+=20
     if(items == 'Four'): price+=30
     if(items == 'Five'): price+=40
-    if(payload['curbside']): price+=5
-    if(payload['stairs']): price+=20
+    if not payload['curbside']: price+=5
+    if payload['stairs']: price+=20
     return price
 
 def calculate_price(payload):
