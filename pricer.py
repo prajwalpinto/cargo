@@ -30,6 +30,13 @@ class Pricer(Resource):
             # response.headers.add("Access-Control-Allow-Origin", "*")
             return response
 
+    def options(self):
+        response = Response(status=200)
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        response.headers.add("Access-Control-Allow-Methods", "POST")
+        response.headers.add("Access-Control-Allow-Headers", "*")
+        return response
+
 
 
     

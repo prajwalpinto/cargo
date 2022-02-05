@@ -17,6 +17,12 @@ class Quotes(Resource):
             'quote': ['Talk is cheap. Show me the code.']
             }
         }
+    def options(self):
+        response = Response(status=200)
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        response.headers.add("Access-Control-Allow-Methods", "GET")
+        response.headers.add("Access-Control-Allow-Headers", "*")
+        return response
 
 
 
