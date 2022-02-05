@@ -1,8 +1,7 @@
-from operator import add
 import googlemaps
 import os
-import json
-from flask import request, Response
+from helper import send_options, send_response
+from flask import request
 from flask_restful import Resource
 gmaps = googlemaps.Client(key=os.environ['API_KEY'])
 distance = 0
@@ -10,35 +9,18 @@ distance = 0
 class Pricer(Resource):
     def post(self):
         content_type = request.headers.get('Content-Type')
-        print('******', content_type)
-        print('^^^^^^^')
-        print(request.headers)
         if (content_type == 'application/json'):
             payload = request.get_json()
-            print('--------')
-            print(payload)
-            print('--------')
             result = calculate_price(payload)
-            if result: 
-                response = Response(json.dumps({'price': result, 'distance': distance}), status=200)
-                response.headers['Content-Type']="application/json"
-                response.headers.add("Access-Control-Allow-Origin", "*")
-                return response
+            if isinstance(result, int):
+                return send_response({'price': result, 'distance': distance}, 200)
             else:
-                response = Response("invalid request params", status=400)
-                # response.headers.add("Access-Control-Allow-Origin", "*")
-                return response
+                return send_response({"error": result if isinstance(result, str) else "invalid request params"}, 400)
         else:
-            response = Response("The response body goes here", status=400)
-            # response.headers.add("Access-Control-Allow-Origin", "*")
-            return response
+            return send_response({"error": "invalid content type"}, 400)
 
     def options(self):
-        response = Response(status=200)
-        response.headers.add("Access-Control-Allow-Origin", "*")
-        response.headers.add("Access-Control-Allow-Methods", "POST")
-        response.headers.add("Access-Control-Allow-Headers", "*")
-        return response
+        return send_options("POST")
 
 
 
@@ -83,4 +65,7 @@ def additional_pricing(payload):
     return price
 
 def calculate_price(payload):
-    return distance_price(get_distance(payload)) + additional_pricing(payload)
+    if(payload['origin'] == '' or payload['destination'] == ''):
+        return 'pickup and return address is blank'
+    else:
+        return distance_price(get_distance(payload)) + additional_pricing(payload)

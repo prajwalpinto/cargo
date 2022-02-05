@@ -1,30 +1,12 @@
-from flask import Flask, request, Response
-from flask_restful import Resource, Api
-from pricer import ( Pricer)
+from flask import Flask
+from flask_restful import Api
+from pricer import Pricer
+from quotes import Quotes
+from helper import send_options, send_response
 
 
 app = Flask(__name__)
 api = Api(app)
-
-class Quotes(Resource):
-    def get(self):
-        return {
-            'William Shakespeare': {
-                'quote': ['Love all,trust a few,do wrong to none',
-                'Some are born great, some achieve greatness, and some greatness thrust upon them.']
-        },
-        'Linus': {
-            'quote': ['Talk is cheap. Show me the code.']
-            }
-        }
-    def options(self):
-        response = Response(status=200)
-        response.headers.add("Access-Control-Allow-Origin", "*")
-        response.headers.add("Access-Control-Allow-Methods", "GET")
-        response.headers.add("Access-Control-Allow-Headers", "*")
-        return response
-
-
 
 api.add_resource(Quotes, '/quotes')
 api.add_resource(Pricer, '/pricer')
