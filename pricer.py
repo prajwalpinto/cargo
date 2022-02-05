@@ -1,9 +1,11 @@
 from operator import add
 import googlemaps
 import os
+import json
 from flask import request, Response
 from flask_restful import Resource
 gmaps = googlemaps.Client(key=os.environ['API_KEY'])
+distance = 0
 
 class Pricer(Resource):
     def post(self):
@@ -18,8 +20,9 @@ class Pricer(Resource):
             print('--------')
             result = calculate_price(payload)
             if result: 
-                response = Response(result, status=200)
-                # response.headers.add("Access-Control-Allow-Origin", "*")
+                response = Response(json.dumps({'price': result, 'distance': distance}), status=200)
+                response.headers['Content-Type']="application/json"
+                response.headers.add("Access-Control-Allow-Origin", "*")
                 return response
             else:
                 response = Response("invalid request params", status=400)
@@ -41,6 +44,7 @@ class Pricer(Resource):
 
     
 def get_distance(payload):
+    global distance 
     distance =  gmaps.distance_matrix(origins=payload['origin'], destinations = payload['destination'], 
                                       mode='driving')["rows"][0]["elements"][0]["distance"]["value"]
     return distance
